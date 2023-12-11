@@ -19,7 +19,7 @@ class GetUI(object):
 
     def get_ui_by_attr(self, is_contains=True, is_update=True, try_count=1, **kwargs):
         """
-        通过节点的属性获取节点
+        get node via attribution
         :param is_contains:
         :param is_update:
         :param try_count:
@@ -31,9 +31,9 @@ class GetUI(object):
 
     def get_uis_by_attr(self, is_contains=True, is_update=True, try_count=1, **kwargs):
         """
-        通过节点的属性获取节点
+        get node via attribution
         :param try_count:
-        :param is_contains: 是否使用模糊查找
+        :param is_contains: fuzzy search
         :param is_update:
         :param kwargs:
         :return: 
@@ -56,7 +56,7 @@ class GetUI(object):
 
     def get_uis_by_xpath(self, xpath, is_update=True, try_count=1):
         """
-        通过xpath查找节点
+        get node via xpath
         :param try_count:
         :param xpath:
         :param is_update: 
@@ -65,7 +65,7 @@ class GetUI(object):
         elements = []
         for index in range(try_count):
             if is_update:
-                xml_str = self.adbext.dump()  # 获取xml文件
+                xml_str = self.adbext.dump()  # get xml
                 self.__init_xml(xml_str)
 
             xpath = xpath.decode('utf-8') if sys.version_info[0] < 3 else xpath
@@ -91,32 +91,32 @@ class GetUI(object):
         parser = etree.XMLParser(huge_tree=True)
         self.xml = etree.fromstring(xml_str, parser=parser)
         for element in self.xml.findall('.//node'):
-            element.tag = element.get('class').split('.')[-1].replace('$', '')  # 将每个node的name替换为class值, 和uiautomator里显示的一致
+            element.tag = element.get('class').split('.')[-1].replace('$', '')  # Replace the name of each node with a class value, consistent with what is displayed in uiautomator
 
 
 class UI:
     def __init__(self, adbext, x1, y1, x2, y2):
         self.__adbext = adbext
-        self.x1 = int(x1)  # 左上角 x
-        self.y1 = int(y1)  # 左上角 y
-        self.x2 = int(x2)  # 右下角 x
-        self.y2 = int(y2)  # 右下角 y
-        self.width = self.x2 - self.x1  # 元素宽
-        self.height = self.y2 - self.y1  # 元素高
+        self.x1 = int(x1)  # left top x
+        self.y1 = int(y1)  # left top y
+        self.x2 = int(x2)  # right bottom x
+        self.y2 = int(y2)  # right bottom y
+        self.width = self.x2 - self.x1  # element width
+        self.height = self.y2 - self.y1  # element hight
         self.x = self.x1 + int(self.width / 2)
         self.y = self.y1 + int(self.height / 2)
-        self.text = None  # 元素文本
-        self.element = None  # 元素对应的 lxml element, ocr无效
+        self.text = None  # element text
+        self.element = None  # the lXML element corresponding to the element
 
     def get_element_str(self):
         return tostring(self.element)
 
     def get_value(self, key):
-        # 返回 lxml element 属性对应的值
+        # return the value corresponding to the lXML element attribute
         if key in short_keys:
             key = short_keys[key]
         return self.element.get(key)
 
     def click(self):
-        # 点击元素的中心点
+        # click on the center point of the element
         self.__adbext.click(self.x, self.y)

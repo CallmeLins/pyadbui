@@ -88,11 +88,11 @@ class Util(object):
                 logging.error('execute command return have err: {}'.format(result))
                 continue
 
-            if err:  # 错误处理
+            if err:  # err handle
                 if isinstance(err, bytes):
                     err = err.decode('utf-8')
 
-                # 处理设备连接错误
+                # devices connect err handle
                 is_device_not_found = 'device' in err and 'not found' in err
                 is_device_offline = 'device offline' in err
                 if is_device_not_found or is_device_offline:

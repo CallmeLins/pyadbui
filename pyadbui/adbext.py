@@ -12,7 +12,7 @@ class AdbExt(object):
         self.util = util
         self.is_helper_ready = False
         self.width, self.height = None, None
-        self.dir_path = os.path.dirname(os.path.abspath(__file__))  # 当前文件所在的目录绝对路径
+        self.dir_path = os.path.dirname(os.path.abspath(__file__))  # absolute path to the directory where the current file is located
         self.temp_device_dir_path = '/data/local/tmp'
 
     def init_device_size(self):
@@ -32,14 +32,14 @@ class AdbExt(object):
         raise NameError('dump xml fail!')
 
     def __dump_xml(self):
-        # 使用 helper 获取 xml
+        # use helper get xml
         xml_str = self.run_helper_cmd('layout')
 
-        # 使用压缩模式
+        # compression mode
         if not xml_str:
             xml_str = self.util.adb('exec-out uiautomator dump --compressed /dev/tty', encoding='')
 
-        # 使用非压缩模式
+        # none compression mode
         if not xml_str:
             xml_str = self.util.adb('exec-out uiautomator dump /dev/tty', encoding='')
 
@@ -54,7 +54,7 @@ class AdbExt(object):
 
     def run_helper_cmd(self, cmd):
         """
-        执行 helper 的命令, 当前 helper 支持 dump xml 和 screenshot
+        execute helper cmd, support dump xml and screenshot
         :param cmd:
         :return:
         """
@@ -74,16 +74,16 @@ class AdbExt(object):
         out = self.run_helper_cmd('screenshot')
         if out and len(out) > 50:
             out = base64.b64decode(out)
-        else:  # helper 截图失败, 使用 screencap 截图
-            logging.warning('helper 截图失败')
+        else:  # helper screenshot faild, use screencap screenshot
+            logging.warning('helper screenshot faild')
             arg = 'exec-out screencap -p'.format(self.util.sn)
-            out = self.util.adb(arg, encoding=None)  # 这里是 png bytes string
+            out = self.util.adb(arg, encoding=None)  # png bytes string
 
-        # 保存截图
+        # save screenshot
         if pc_path:
             if self.util.is_py2:
                 pc_path = pc_path.decode('utf-8')
-            if os.path.exists(pc_path):  # 删除电脑文件
+            if os.path.exists(pc_path):  # del pc fail
                 os.remove(pc_path)
             with open(pc_path, 'wb') as f:
                 f.write(out)
@@ -102,17 +102,17 @@ class AdbExt(object):
 
     def long_click(self, x, y, duration=''):
         """
-        长按
-        :param x: x 坐标
-        :param y: y 坐标
-        :param duration: 长按的时间（ms）
+        long click
+        :param x: x coordinate
+        :param y: y coordinate
+        :param duration: long click time(ms)
         :return:
         """
         self.util.shell('input touchscreen swipe {} {} {} {} {}'.format(x, y, x, y, duration))
 
     def start(self, pkg):
         """
-        使用monkey, 只需给出包名即可启动一个应用
+        use monkey start a app via package name
         :param pkg:
         :return:
         """
@@ -139,7 +139,7 @@ class AdbExt(object):
 
     def swipe(self, e1=None, e2=None, start_x=None, start_y=None, end_x=None, end_y=None, duration=" "):
         """
-        滑动事件, Android 4.4以上可选duration(ms)
+        swipe event
         usage: swipe(e1, e2)
                swipe(e1, end_x=200, end_y=500)
                swipe(start_x=0.5, start_y=0.5, e2)
@@ -164,7 +164,7 @@ class AdbExt(object):
 
     def clear(self, pkg):
         """
-        重置应用
+        reset app
         :param pkg:
         :return:
         """
@@ -172,31 +172,31 @@ class AdbExt(object):
 
     def wake_up(self):
         """
-        点亮屏幕
+        wakeup screen
         :return:
         """
         self.util.shell('input keyevent KEYCODE_WAKEUP')
 
     def unlock(self):
         """
-        解锁屏幕
+        unlock screen
         :return:
         """
         self.util.shell('input keyevent 82')
 
     def grant(self, pkg, permission):
         """
-        给app赋权限, 类似 adb shell pm grant [PACKAGE_NAME] android.permission.PACKAGE_USAGE_STATS
+        give permission via adb shell pm grant [PACKAGE_NAME] android.permission.PACKAGE_USAGE_STATS
         :return:
         """
         self.util.shell('pm grant {} {}'.format(pkg, permission))
 
     def install(self, apk_path, with_g=True, with_r=False, user=None):
         """
-        安装包
+        install package
         :param apk_path:
-        :param with_g: -g 在一些设备上可以自动授权, 默认 true
-        :param with_r: -r 覆盖安装, 默认 false
+        :param with_g: -g on some devices, automatic authorization can be granted, with a default of true
+        :param with_r: -r overwrite installation, default false
         :param user:
         :return:
         """
@@ -207,11 +207,11 @@ class AdbExt(object):
             arg = arg + ' -g'
         if with_r:
             arg = arg + ' -r'
-        self.util.adb('{} "{}"'.format(arg, apk_path), timeout=60 * 5)  # 安装较大的包可能比较耗时
+        self.util.adb('{} "{}"'.format(arg, apk_path), timeout=60 * 5)  
 
     def uninstall(self, pkg):
         """
-        卸载包
+        uninstall package
         :param pkg:
         :return:
         """
@@ -231,8 +231,8 @@ class AdbExt(object):
 
     def list_packages(self, system=False):
         """
-        返回手机中安装的包
-        :param system:  是否包含系统包
+        return package lsit have been installed
+        :param system:  incloud system package or not
         :return:
         """
         with_system = '' if system else '-3'

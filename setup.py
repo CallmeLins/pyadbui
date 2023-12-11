@@ -16,7 +16,7 @@ requires = [
 setup(
     name='pyadbui',
     version=VERSION,
-    description='pyadbui 是一个基于 adb 的 python 库, 特色是可以通过安卓原生 uiautomator 获取界面属性, xpath, ocr 等元素.',
+    description='Pyadbui is a library based on adb, which can to obtain interface properties, xpath, ocr, and other elements through Android native uiautomaton',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Hao',
